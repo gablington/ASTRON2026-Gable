@@ -232,8 +232,8 @@ def sequential_epoch_dm(model: TimingModel, toas: TOAs, epoch_masks,
 #if __name__ == "__main__":
 from pint.models import get_model_and_toas
 
-parfile = "B1937+21_PINT_20220306.nb.par"
-timfile = "B1937+21_PINT_20220306.nb.tim"
+parfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.par"
+timfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.tim"
 model, toas = get_model_and_toas(parfile, timfile)
 
 # Approach A: joint fit with epoch-sized DMX bins
