@@ -229,17 +229,17 @@ def sequential_epoch_dm(model: TimingModel, toas: TOAs, epoch_masks,
 # ---------------------------------------------------------------------------
 # This is how we run things
 # ---------------------------------------------------------------------------
-# if __name__ == "__main__":
-#     from pint.models import get_model_and_toas
+#if __name__ == "__main__":
+from pint.models import get_model_and_toas
 
-#     parfile =
-#     timfile =
-#     model, toas = get_model_and_toas(parfile, timfile)
+parfile = "B1937+21_PINT_20220306.nb.par"
+timfile = "B1937+21_PINT_20220306.nb.tim"
+model, toas = get_model_and_toas(parfile, timfile)
 
-#     # Approach A: joint fit with epoch-sized DMX bins
-#     model_a = model.copy()
-#     fitter_a, dmx_a = joint_dmx_epoch_fit(model_a, toas.copy(), binwidth=0.5 * u.d)
-#     print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
+# Approach A: joint fit with epoch-sized DMX bins
+model_a = model.copy()
+fitter_a, dmx_a = joint_dmx_epoch_fit(model_a, toas.copy(), binwidth=0.5 * u.d)
+print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
 
 #     # # Approach B: sequential per-epoch
 #     # model_b = model.copy()
