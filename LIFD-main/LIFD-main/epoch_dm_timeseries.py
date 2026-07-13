@@ -119,36 +119,53 @@ def group_into_epochs(toas: TOAs, gap_days: float = 1.0):
 # ---------------------------------------------------------------------------
 # Approach A: PINT fit using epoch-sized DMX bins
 # ---------------------------------------------------------------------------
-def joint_dmx_epoch_fit(model: TimingModel, toas: TOAs, binwidth=0.5 * u.d,
+def per_epoch_DMX_binning(model: TimingModel, toas: TOAs, binwidth=0.5 * u.d,
                          divide_freq=1000 * u.MHz):
-    """
-    Bin TOAs into epoch-sized DMX windows and fit everything (DMX offsets + all other free parameters) simultaneously in one GLS fit. This is the same as NANOGrav's standard DMX methodology,
-    just with bins narrow enough that each one is a single observing epoch rather than a multi-day window.
-
-    IMPORTANT! Binwidth should be a bit longer than your longest intra-epoch TOA span (e.g. a few hours) but much shorter than the gap between epochs, so each
-    bin encloses exactly one session's multi-frequency TOAs (I learned this the hard way!)
-    """
-    mask, dmx_component = dmx_ranges_fixed(toas, divide_freq=divide_freq,
-                                            binwidth=binwidth, verbose=False)
-
+ 
+    mask, dmx_component = dmx_ranges_fixed(toas, divide_freq=divide_freq, binwidth=binwidth, verbose=False)
 
     if not np.all(mask):
-#        n_dropped = np.sum(~mask)
-#        print(f"[joint_dmx_epoch_fit] {n_dropped} TOAs fell outside any DMX bin and will be excluded from this fit.")
         toas = toas[mask]
 
     if "DispersionDMX" in model.components:  # Remove DMX component from the model
         model.remove_component("DispersionDMX")
     model.add_component(dmx_component, validate=True)
 
+    return model
 
-    # FREEZE ALL THE NON-DMX PARAMETER
+# # ---------------------------------------------------------------------------
+# # Approach A: PINT fit using epoch-sized DMX bins
+# # ---------------------------------------------------------------------------
+# def joint_dmx_epoch_fit(model: TimingModel, toas: TOAs, binwidth=0.5 * u.d,
+#                          divide_freq=1000 * u.MHz):
+#     """
+#     Bin TOAs into epoch-sized DMX windows and fit everything (DMX offsets + all other free parameters) simultaneously in one GLS fit. This is the same as NANOGrav's standard DMX methodology,
+#     just with bins narrow enough that each one is a single observing epoch rather than a multi-day window.
 
-    fitter = Fitter.auto(toas, model)  # Set up the fitter
-    fitter.fit_toas()  # Do the fit
+#     IMPORTANT! Binwidth should be a bit longer than your longest intra-epoch TOA span (e.g. a few hours) but much shorter than the gap between epochs, so each
+#     bin encloses exactly one session's multi-frequency TOAs (I learned this the hard way!)
+#     """
+#     mask, dmx_component = dmx_ranges_fixed(toas, divide_freq=divide_freq,
+#                                             binwidth=binwidth, verbose=False)
 
-    dmx_result = pu.dmxparse(fitter, save=False)
-    return fitter, dmx_result
+
+#     if not np.all(mask):
+# #        n_dropped = np.sum(~mask)
+# #        print(f"[joint_dmx_epoch_fit] {n_dropped} TOAs fell outside any DMX bin and will be excluded from this fit.")
+#         toas = toas[mask]
+
+#     if "DispersionDMX" in model.components:  # Remove DMX component from the model
+#         model.remove_component("DispersionDMX")
+#     model.add_component(dmx_component, validate=True)
+
+
+#     # FREEZE ALL THE NON-DMX PARAMETER
+
+#     fitter = Fitter.auto(toas, model)  # Set up the fitter
+#     fitter.fit_toas()  # Do the fit
+
+#     dmx_result = pu.dmxparse(fitter, save=False)
+#     return fitter, dmx_result
 
 
 # ---------------------------------------------------------------------------
@@ -230,17 +247,17 @@ def sequential_epoch_dm(model: TimingModel, toas: TOAs, epoch_masks,
 # ---------------------------------------------------------------------------
 # This is how we run things
 # ---------------------------------------------------------------------------
-#if __name__ == "__main__":
-from pint.models import get_model_and_toas
+# #if __name__ == "__main__":
+# from pint.models import get_model_and_toas
 
-parfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.par"
-timfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.tim"
-model, toas = get_model_and_toas(parfile, timfile)
+# parfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.par"
+# timfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.tim"
+# model, toas = get_model_and_toas(parfile, timfile)
 
-# Approach A: joint fit with epoch-sized DMX bins
-model_a = copy.copy(model)
-fitter_a, dmx_a = joint_dmx_epoch_fit(model_a, copy.copy(toas), binwidth=0.5 * u.d)
-print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
+# # Approach A: joint fit with epoch-sized DMX bins
+# model_a = copy.copy(model)
+# fitter_a, dmx_a = joint_dmx_epoch_fit(model_a, copy.copy(toas), binwidth=0.5 * u.d)
+# print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
 
 #     # # Approach B: sequential per-epoch
 #     # model_b = model.copy()

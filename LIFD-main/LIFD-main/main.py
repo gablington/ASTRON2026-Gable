@@ -34,7 +34,7 @@ logging.setup("WARNING")
 import astropy.units as u
 from utils import plot_residuals, get_dmx_params, freeze_parameters, get_FD_delay
 import sys
-from epoch_dm_timeseries import joint_dmx_epoch_fit
+from epoch_dm_timeseries import per_epoch_DMX_binning
 
 #-----------------------------------------------------------------------------------------------------------
 # Configuration
@@ -135,19 +135,25 @@ for i, method in enumerate(["FD", "IFD", "LIFD"]):
     #-----------------------------------------------------------------------------------------------------------
     # Fit the timing model
     #-----------------------------------------------------------------------------------------------------------
-    #timing_model_a = copy.copy(timing_model)
-    #toas_a = copy.copy(toas)
-    print("test0")
-    f, dmx_a = joint_dmx_epoch_fit(timing_model, toas, binwidth=0.5 * u.d)
-    print("test1")
-    print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
-    #f.fit_toas()
+    new_timing_model = per_epoch_DMX_binning(timing_model, toas, binwidth=0.5 * u.d)
+
+    f = WLSFitter(toas, new_timing_model)
+    f.fit_toas()
     fitted_model = f.model
-    print("test2")
-    
-    # f = WLSFitter(toas, timing_model)
-    # f.fit_toas()
+
+    # #timing_model_a = copy.copy(timing_model)
+    # #toas_a = copy.copy(toas)
+    # print("test0")
+    # f, dmx_a = joint_dmx_epoch_fit(timing_model, toas, binwidth=0.5 * u.d)
+    # print("test1")
+    # print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
+    # #f.fit_toas()
     # fitted_model = f.model
+    # print("test2")
+    
+    # # f = WLSFitter(toas, timing_model)
+    # # f.fit_toas()
+    # # fitted_model = f.model
 
     if plot_fits:
         fig_aux, ax_aux = plot_residuals(toas_mjd_pint, f.resids.time_resids, freqs_pint)
