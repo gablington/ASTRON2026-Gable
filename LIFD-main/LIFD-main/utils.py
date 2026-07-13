@@ -22,8 +22,10 @@ from matplotlib.colors import LinearSegmentedColormap, Normalize
 from scipy.linalg import cho_factor
 from numpy.polynomial.polynomial import Polynomial
 from pint.residuals import Residuals
-from pypulse.utils import weighted_moments
-from pypulse.par import Par
+from PyPulse.pypulse.utils import weighted_moments
+#from pypulse.utils import weighted_moments
+from PyPulse.pypulse.par import Par
+#from pypulse.par import Par
 import astropy.units as u
 from dataclasses import dataclass
 
