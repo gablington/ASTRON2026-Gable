@@ -17,6 +17,7 @@ from pint.toa import TOAs
 from pint.models.timing_model import TimingModel
 from pint.fitter import Fitter
 from pint import utils as pu
+import copy
 
 
 def dmx_ranges_fixed(toas: TOAs, divide_freq=1000.0 * u.MHz, binwidth=15.0 * u.d,
@@ -237,8 +238,8 @@ timfile = "./LIFD-main/LIFD-main/B1937+21_PINT_20220306.nb.tim"
 model, toas = get_model_and_toas(parfile, timfile)
 
 # Approach A: joint fit with epoch-sized DMX bins
-model_a = model.copy()
-fitter_a, dmx_a = joint_dmx_epoch_fit(model_a, toas.copy(), binwidth=0.5 * u.d)
+model_a = copy.copy(model)
+fitter_a, dmx_a = joint_dmx_epoch_fit(model_a, copy.copy(toas), binwidth=0.5 * u.d)
 print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
 
 #     # # Approach B: sequential per-epoch
