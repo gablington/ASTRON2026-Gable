@@ -34,26 +34,25 @@ logging.setup("WARNING")
 import astropy.units as u
 from utils import plot_residuals, get_dmx_params, freeze_parameters, get_FD_delay
 import sys
-from epoch_dm_timeseries import group_into_epochs, joint_dmx_epoch_fit, sequential_epoch_dm
-import copy
+from epoch_dm_timeseries import joint_dmx_epoch_fit
 
 #-----------------------------------------------------------------------------------------------------------
 # Configuration
 #-----------------------------------------------------------------------------------------------------------
 
-PSR_name: str = "J1713+0747"     # Name of the pulsar
+PSR_name: str = "B1937+21"     # Name of the pulsar
 plot_fits: bool = False         # Plot the pre-fit and post-fit residuals
 simulations: bool = False      # Running on simulated data (as opposed to real data)
 order: int = 6                 # Order (number of terms) of the IFD/LIFD polynomial
-change_dm: bool = False        # Override the par-file DM with a previously fitted value
+change_dm: bool = False         # Override the par-file DM with a previously fitted value
 
 # Input files
 if simulations:
-    parfile: str = f"./simulations/simplified_timing_model_pint.par"
-    timfile: str = f"./simulations/timfile_freq_nofreqev.tim"
+    parfile: str = f"./LIFD-main/LIFD-main/simulations/simplified_timing_model_pint.par"
+    timfile: str = f"./LIFD-main/LIFD-main/simulations/timfile_freq_nofreqev.tim"
 else:
-    parfile: str = glob(f"./NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/par/{PSR_name}_PINT_*.nb.par")[0]
-    timfile: str = glob(f"./NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/tim/{PSR_name}_PINT_*.nb.tim")[0]
+    parfile: str = glob(f"./LIFD-main/LIFD-main/NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/par/{PSR_name}_PINT_*.nb.par")[0]
+    timfile: str = glob(f"./LIFD-main/LIFD-main/NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/tim/{PSR_name}_PINT_*.nb.tim")[0]
 
 # Set up the comparison plot
 sns.set_context("paper", font_scale=1.50, rc={"lines.linewidth": 2.5})
@@ -136,35 +135,27 @@ for i, method in enumerate(["FD", "IFD", "LIFD"]):
     #-----------------------------------------------------------------------------------------------------------
     # Fit the timing model
     #-----------------------------------------------------------------------------------------------------------
-    timing_model_a = copy.copy(timing_model)
-    toas_a = copy.copy(toas)
-    fitter_a, dmx_a = joint_dmx_epoch_fit(timing_model_a, toas_a, binwidth=0.5 * u.d)
+    #timing_model_a = copy.copy(timing_model)
+    #toas_a = copy.copy(toas)
+    print("test0")
+    f, dmx_a = joint_dmx_epoch_fit(timing_model, toas, binwidth=0.5 * u.d)
+    print("test1")
     print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
-    #fitter_a.fit_toas()
-    fitted_model = fitter_a.model
-
-    # f = WLSFitter(toas, timing_model_a)
+    #f.fit_toas()
+    fitted_model = f.model
+    print("test2")
+    
+    # f = WLSFitter(toas, timing_model)
     # f.fit_toas()
     # fitted_model = f.model
 
     if plot_fits:
-        fig_aux, ax_aux = plot_residuals(toas_mjd_pint, fitter_a.resids.time_resids, freqs_pint)
+        fig_aux, ax_aux = plot_residuals(toas_mjd_pint, f.resids.time_resids, freqs_pint)
         ax_aux.set_title(f"Post-Fit | {method}", fontsize=14)
         plt.tight_layout()
         plt.savefig(f"./results/{method}_simulation_nofreqeq_residuals_postfit.png")
         plt.show()
         plt.close(fig_aux)
-    # f = WLSFitter(toas, timing_model)
-    # f.fit_toas()
-    # fitted_model = f.model
-
-    # if plot_fits:
-    #     fig_aux, ax_aux = plot_residuals(toas_mjd_pint, f.resids.time_resids, freqs_pint)
-    #     ax_aux.set_title(f"Post-Fit | {method}", fontsize=14)
-    #     plt.tight_layout()
-    #     plt.savefig(f"./results/{method}_simulation_nofreqeq_residuals_postfit.png")
-    #     plt.show()
-    #     plt.close(fig_aux)
 
     # -----------------------------------------------------------------------------------------------------------
     # Extract the fitted chromatic-delay coefficients and the implied delay curve
