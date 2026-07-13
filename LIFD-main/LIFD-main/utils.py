@@ -22,6 +22,7 @@ from matplotlib.colors import LinearSegmentedColormap, Normalize
 from scipy.linalg import cho_factor
 from numpy.polynomial.polynomial import Polynomial
 from pint.residuals import Residuals
+import PyPulse
 from PyPulse.pypulse.utils import weighted_moments
 #from pypulse.utils import weighted_moments
 from PyPulse.pypulse.par import Par
