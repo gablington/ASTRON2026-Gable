@@ -183,7 +183,7 @@ def sequential_epoch_dm(model: TimingModel, toas: TOAs, epoch_masks,
 
             # FIT THE DM
             f = Fitter.auto(sub, epoch_model)
-            f.fit_toas()
+            f.fit_toas(maxiter=1)
 
  #           try:
  #               f = Fitter.auto(sub, epoch_model)
