@@ -140,10 +140,12 @@ for i, method in enumerate(["FD", "IFD", "LIFD"]):
     #toas_a = copy.copy(toas)
     print("test0")
     new_timing_model = per_epoch_DMX_binning(timing_model, toas, gap_days = 0.25)
-    print(new_timing_model)
-#    print("test1")
+    #print(new_timing_model)
+    print("test1")
 #    print("Approach A: mean DM =", dmx_a["mean_dmx"], "+/-", dmx_a["avg_dm_err"])
-    sys.exit()
+    
+    #continue
+    #sys.exit()
 
     f = WLSFitter(toas, timing_model)
     f.fit_toas()
