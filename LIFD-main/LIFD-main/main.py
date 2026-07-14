@@ -51,8 +51,8 @@ if simulations:
     parfile: str = f"./LIFD-main/LIFD-main/simulations/simplified_timing_model_pint.par"
     timfile: str = f"./LIFD-main/LIFD-main/simulations/timfile_freq_nofreqev.tim"
 else:
-    parfile: str = glob(f"./NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/par/{PSR_name}_PINT_*.nb.par")[0]
-    timfile: str = glob(f"./NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/tim/{PSR_name}_PINT_*.nb.tim")[0]
+    parfile: str = glob(f"./LIFD-main/LIFD-main/NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/par/{PSR_name}_PINT_*.nb.par")[0]
+    timfile: str = glob(f"./LIFD-main/LIFD-main/NANOGrav15yr_PulsarTiming_v2.1.0/narrowband/tim/{PSR_name}_PINT_*.nb.tim")[0]
 
 # Set up the comparison plot
 sns.set_context("paper", font_scale=1.50, rc={"lines.linewidth": 2.5})
